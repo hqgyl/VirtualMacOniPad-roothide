@@ -86,7 +86,7 @@ chmod 640 "$state/Network/dhcpd_leases"
 native_root=$(jbroot /)
 native_root=${native_root%/}
 for domain in system user/501; do
-    for service in com.apple.NetworkSharing vzi.apple.bootpd; do
+    for service in vzi.apple.NetworkSharing vzi.apple.bootpd com.apple.NetworkSharing; do
         plist=com.apple.NetworkSharing.plist
         test "$service" != vzi.apple.bootpd || plist=com.apple.bootpd.plist
         job=$(launchctl print "$domain/$service" 2>/dev/null || true)
@@ -106,7 +106,7 @@ for domain in system user/501; do
     done
 done
 launchctl bootstrap "$network_domain" /Library/LaunchDaemons/com.apple.NetworkSharing.plist
-launchctl kickstart -k "$network_domain/com.apple.NetworkSharing"
+launchctl kickstart -k "$network_domain/vzi.apple.NetworkSharing"
 launchctl enable "$network_domain/vzi.apple.bootpd"
 launchctl bootstrap "$network_domain" /Library/LaunchDaemons/com.apple.bootpd.plist
 uicache -p /Applications/VirtualMac.app

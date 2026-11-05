@@ -19,7 +19,7 @@ if test "${1:-}" = --list; then
     exit 0
 fi
 for domain in system user/501; do
-    for service in com.apple.NetworkSharing vzi.apple.bootpd; do
+    for service in vzi.apple.NetworkSharing vzi.apple.bootpd com.apple.NetworkSharing; do
         plist=com.apple.NetworkSharing.plist
         test "$service" != vzi.apple.bootpd || plist=com.apple.bootpd.plist
         job=$(launchctl print "$domain/$service" 2>/dev/null || true)

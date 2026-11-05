@@ -316,6 +316,11 @@ for plist in "$STAGE/Library/LaunchDaemons"/*.plist; do
         -e 's|>/var/jb/|>/|g' \
         -e 's|>/tmp/|>/var/mobile/Library/VirtualMac/Network/|g'
 done
+# launchd treats a job labelled with Apple's own name as a platform binary and
+# refuses the ad-hoc helper with OS_REASON_CODESIGNING, so the job is renamed
+# while the Mach service it registers keeps the name its clients look up.
+sed_in_place "$STAGE/Library/LaunchDaemons/com.apple.NetworkSharing.plist" \
+    -e 's|<string>com.apple.NetworkSharing</string>|<string>vzi.apple.NetworkSharing</string>|'
 
 # RootHide needs storage access on every executable, including the extracted
 # VMM, Installation, usbmuxd and network helpers; retain their other keys.
