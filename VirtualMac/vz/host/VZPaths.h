@@ -1,6 +1,7 @@
 #ifndef VZ_PATHS_H
 #define VZ_PATHS_H
 
+#include <string.h>
 #include <unistd.h>
 
 #if defined(VZ_ROOTHIDE)

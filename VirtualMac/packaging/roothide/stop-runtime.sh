@@ -6,28 +6,12 @@ native_root=$(jbroot /)
 native_root=${native_root%/}
 process_helper=/usr/libexec/VirtualMac/install/runtime-processes
 processes() {
+    # runtime-processes is the only process matcher the package can rely on:
+    # the RootHide bootstrap ships neither ps nor awk, and an upgrade from a
+    # build predating the helper has nothing left to match with.
     if test -x "$process_helper"; then
         "$process_helper" --list
-        return
     fi
-    # Upgrade from packages predating runtime-processes: only trust explicit
-    # randomized paths. Bare names can belong to unrelated system services.
-    snapshot=$(ps -axww -o pid=,ppid=,comm=)
-    printf '%s\n' "$snapshot" | awk -v root="$native_root" '
-        {
-                path = $3
-                if (index(path, "/private" root "/") == 1) path = substr(path, 9)
-                if (index(path, root "/") != 1) next
-                path = substr(path, length(root) + 1)
-                if (path == "/Applications/VirtualMac.app/VirtualMac" ||
-                    path == "/usr/libexec/VirtualMac/install/install-macos" ||
-                    path == "/usr/libexec/VirtualMac/payload/VirtualMachine.xpc/Contents/MacOS/com.apple.Virtualization.VirtualMachine" ||
-                    path == "/usr/libexec/VirtualMac/payload/Installation.xpc/Contents/MacOS/com.apple.Virtualization.Installation" ||
-                    path == "/usr/libexec/VirtualMac/payload/Installation.xpc/Contents/Frameworks/MobileDevice.framework/Versions/A/Resources/usbmuxd" ||
-                    path == "/usr/libexec/InternetSharing" || path == "/usr/libexec/bootpd" ||
-                    path == "/usr/sbin/rtadvd")
-                    print $1
-        }'
 }
 
 if test "${1:-}" = --list; then

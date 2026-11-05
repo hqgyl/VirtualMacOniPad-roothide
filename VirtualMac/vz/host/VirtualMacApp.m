@@ -4686,7 +4686,7 @@ static void configureVideoToolbox(id configuration, NSDictionary *options) {
 // The iOS 18 SDK removed AVAudioSessionCategoryOptionAllowBluetoothHFP from
 // the public headers, but the option bit (0x80) remains valid on the iPadOS
 // 14-16 targets this app runs on, where the audio session still accepts it.
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 180000
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 180000 || !(AVAudioSessionCategoryOptionAllowBluetoothHFP)
 #define VZAVSessionOptionAllowBluetoothHFP 0x80
 #else
 #define VZAVSessionOptionAllowBluetoothHFP \
