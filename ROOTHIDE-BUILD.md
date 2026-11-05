@@ -1,5 +1,7 @@
 # RootHide build — credits and what works
 
+> 中文版：[ROOTHIDE-BUILD.zh-CN.md](ROOTHIDE-BUILD.zh-CN.md)
+
 This branch (`codex/roothide-compat`) carries the RootHide (Dopamine-roothide)
 port of Virtual Mac, and builds the package **on the iPad itself** instead of
 on a Mac. Nothing here changes the app's behaviour for a standard
