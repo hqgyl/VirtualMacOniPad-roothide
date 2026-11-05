@@ -97,7 +97,9 @@ into the jailbreak trust cache as root.
 - Booting a guest (the Sequoia bundle the install migrated): the VMM, the
   injected `VirtualMacPaths.dylib`, `com.apple.security.virtualization` and the
   hypervisor path have not been exercised.
-- The network daemons (com.apple.NetworkSharing, vzi.apple.bootpd) were
-  bootstrapped by `postinst` but not checked for a running service.
+- The network daemons are bootstrapped by `postinst` and show up under
+  `launchctl print user/501/com.apple.NetworkSharing` (spawn scheduled) and
+  `user/501/vzi.apple.bootpd` (not running, socket activated); they have not
+  been made to serve an actual VM network.
 - `install-macos` / restore-OS installation, the keyboard passthrough tweak, and
   the iPadOS 15 binaries (`*.ipados15`) on this iPadOS 16 device.
