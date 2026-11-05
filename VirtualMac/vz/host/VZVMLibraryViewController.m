@@ -2610,7 +2610,10 @@ static const CGFloat VZLibraryHorizontalInset = 24.0;
     sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     (void)layout; (void)indexPath;
-    CGFloat width = collectionView.bounds.size.width - 48;
+    // UIKit requires the item to be strictly narrower than the collection view
+    // minus its section insets; the exact fit this arithmetic produces is one
+    // point too wide at some widths and logs a layout warning every pass.
+    CGFloat width = collectionView.bounds.size.width - 48 - 1;
     if ([[VZAppSettings.sharedSettings stringForKey:VZLibraryLayoutKey] isEqualToString:@"list"])
         return CGSizeMake(width, 82);
     NSUInteger columns = width >= 900 ? 3 : (width >= 520 ? 2 : 1);

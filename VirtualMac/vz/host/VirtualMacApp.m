@@ -6,6 +6,7 @@
 #import <CoreImage/CoreImage.h>
 #import <Metal/Metal.h>
 #import <QuartzCore/CADisplayLink.h>
+#include <mach/mach_time.h>
 #import "NSViewShim.h"
 #import "VZVMLibraryViewController.h"
 #import "VZAppSettings.h"
@@ -936,6 +937,12 @@ static void resumeScrollFlush(void) {
         gScrollDisplayLink = [CADisplayLink
             displayLinkWithTarget:gScrollFlusher
                          selector:@selector(flushTick)];
+        // ProMotion: a display link without a preferred range runs at 60 Hz on
+        // this panel. Ask for the panel's maximum so a trackpad/mouse scroll is
+        // sliced at the rate the screen can actually present.
+        if (@available(iOS 15.0, *))
+            gScrollDisplayLink.preferredFrameRateRange =
+                CAFrameRateRangeMake(60.0, 120.0, 120.0);
         [gScrollDisplayLink retain];
         [gScrollDisplayLink addToRunLoop:NSRunLoop.mainRunLoop
                                  forMode:NSRunLoopCommonModes];
@@ -4325,6 +4332,27 @@ static void setStatus(NSString *status) {
 static void traceFrameUpdate(id self, SEL selector, id framebuffer,
                              VZFrameUpdateSharedPtr update) {
     uint64_t count = __sync_add_and_fetch(&gFrameUpdateCount, 1);
+    // Report the rate the guest actually presents at, so a 30/60/120 claim is
+    // measured rather than assumed.
+    static mach_timebase_info_data_t frameTimebase;
+    static uint64_t frameWindowStart;
+    static uint64_t frameWindowCount;
+    if (!frameTimebase.denom)
+        mach_timebase_info(&frameTimebase);
+    uint64_t frameNow = mach_absolute_time();
+    if (!frameWindowStart) {
+        frameWindowStart = frameNow;
+        frameWindowCount = count;
+    } else {
+        double elapsed = (double)(frameNow - frameWindowStart) *
+            (double)frameTimebase.numer / (double)frameTimebase.denom / 1e9;
+        if (elapsed >= 2.0) {
+            printf("[VirtualMac] guest frames %.1f/s over %.1fs\n",
+                   (double)(count - frameWindowCount) / elapsed, elapsed);
+            frameWindowStart = frameNow;
+            frameWindowCount = count;
+        }
+    }
     const VZFrameUpdateSharedPtr *shared = update.object;
     if (count <= 3 || (gDebugLogging && count % 300 == 0))
         printf("[VirtualMac] PVG frame=%llu framebuffer=%p update=%p control=%p\n",
