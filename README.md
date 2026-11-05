@@ -1,5 +1,8 @@
 # Virtual Mac on iPad
 
+> **RootHide 版本（简体中文）**：[ROOTHIDE-BUILD.zh-CN.md](ROOTHIDE-BUILD.zh-CN.md) —— 作者署名、本分支的功能与已验证/未验证清单
+> **RootHide build (English)**: [ROOTHIDE-BUILD.md](ROOTHIDE-BUILD.md)
+
 People have dreamed of running macOS on iPad for [more](https://www.macstories.net/stories/macpad-how-i-created-the-hybrid-mac-ipad-laptop-and-tablet-that-apple-wont-make/) [than](https://github.com/khanhduytran0/MacWSBootingGuide) [a](https://khronokernel.com/apple/silicon/2021/01/17/QEMU-AS.html) [decade](https://worthdoingbadly.com/macappsios/). Today, that dream comes true. With Virtual Mac, iPad finally breaks free from iPadOS, enabling pro apps like Xcode, Terminal, Final Cut Pro, Logic Pro, and Pixelmator Pro to run directly on device. Requires iPad Pro (M1, M2) or iPad Air (M1) running iPadOS 14 up to 16.3.1.
 
 ![Screenshot of Virtual Mac on iPad](VirtualMac/screenshots/VirtualMac.png)
