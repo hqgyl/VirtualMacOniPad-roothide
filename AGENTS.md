@@ -91,15 +91,27 @@ into the jailbreak trust cache as root.
   `VirtualMac.log` is written to `/var/mobile/Library/VirtualMac/User/Run/`
   with the expected startup lines (`installed Metal keyboard-rendering fix`,
   `VM picker ready`, `presenting VM library`).
+- The macOS restore installation runs from the app: on 2026-11-05 20:15–20:20
+  a macOS 15.6.1 (24G90) install finished
+  (`User/Installations/*.installation/Attempt.plist` `State = complete`, the log
+  ends with `INSTALL_SUCCEEDED`) into `User/Library/Sequoia.bundle`.
+- That VM cold-boots and renders: the VMM is the package's own payload binary
+  (`.../VirtualMac/payload/VirtualMachine.xpc/Contents/MacOS/com.apple.Virtualization.VirtualMachine`),
+  `vmmhook.log` shows the twelve `IOSurfaceCreate` calls and
+  `[GuestPolicy] guest CSR policy complete`, `VirtualMac.log` shows
+  `PVG frame=1..3` and `display viewport 1194x834 ... guest=2388x1668`, keys and
+  pointer events reach the guest, and its `Disk.img` is written while it runs.
+  `强制关机` returns the app to the library and ends its process; opening the app
+  again starts the VM again with a fresh VMM.
 
 ## Not verified
 
-- Booting a guest (the Sequoia bundle the install migrated): the VMM, the
-  injected `VirtualMacPaths.dylib`, `com.apple.security.virtualization` and the
-  hypervisor path have not been exercised.
-- The network daemons are bootstrapped by `postinst` and show up under
-  `launchctl print user/501/com.apple.NetworkSharing` (spawn scheduled) and
-  `user/501/vzi.apple.bootpd` (not running, socket activated); they have not
-  been made to serve an actual VM network.
-- `install-macos` / restore-OS installation, the keyboard passthrough tweak, and
-  the iPadOS 15 binaries (`*.ipados15`) on this iPadOS 16 device.
+- Networking inside the guest (the VM is set to bridge on en0; nothing was
+  checked from macOS) and the network daemons, which are bootstrapped by
+  `postinst` and show up under `launchctl print user/501/com.apple.NetworkSharing`
+  (spawn scheduled) and `user/501/vzi.apple.bootpd` (not running, socket
+  activated).
+- The keyboard passthrough tweak, the iPadOS 15 binaries (`*.ipados15`) on this
+  iPadOS 16 device, and anything beyond a freshly installed guest (suspend and
+  resume, shared folders, audio, external displays, long-run stability).
+
